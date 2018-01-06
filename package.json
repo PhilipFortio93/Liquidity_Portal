@@ -1,0 +1,14 @@
+{
+  "name": "barclays_liquidity_portal",
+  "version": "1.0.0",
+  "description": "An application for c/r ETFs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Philip Fortio",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
