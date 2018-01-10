@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <% include ../partials/head %>
+</head>
+<body>
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<div class="container">
+    <div class="row">
+        <form enctype="multipart/form-data" action="/products/upload" method="post">
+            <input id="sillybilly" name="sillybilly" type="file" />
+            <button class='btn btn-success' type="submit">Upload</button>
+        </form>
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+    <h3><span class="fa fa-user"></span> Product Catalogue</h3>
+
+        <table id="productlist">
+            <thead>
+                 <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                 </tr>
+             </thead>
+            <tbody>
+                <% etf_list.forEach(function(etf) { %>
+                <tr>
+                    <td><%= etf.name %></td>
+                    <td><a href="/products/<%=etf._id%>"> <%= etf.ric %></a></td>
+                    <td>bla</td>
+                    <td>bla</td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+</div>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+<script>
+    $(document).ready(function() {
+    $   ('#productlist').DataTable();
+    });
+</script>
+</html>
