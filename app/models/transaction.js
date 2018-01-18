@@ -8,6 +8,8 @@ var transactionSchema = mongoose.Schema({
     ric         : String,
     quantity   : Number,
     create_or_redeem : String,
+    status: String,
+    settlement_date: Date,
     order_date    : Date
 
 

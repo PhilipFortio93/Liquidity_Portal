@@ -1,11 +1,14 @@
 var Etf            = require('../app/models/etf');
 var multer = require('multer');
 var upload = multer({ storage: multer.memoryStorage() });
+var Transaction = require('../app/models/transaction');
+var User            = require('../app/models/user');
 
 let xlsx = require('node-xlsx')
 
-module.exports = function(app, passport) {
+module.exports = function(app, passport, nodemailer) {
 
+    let {sendEmail} = require('../config/mailer')(nodemailer)
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
@@ -66,7 +69,8 @@ module.exports = function(app, passport) {
 
         let etf_list = await Etf.find().exec();
         res.render('pages/products.ejs', {
-            etf_list : etf_list
+            etf_list : etf_list,
+            user : req.user
         });
 
     })
@@ -74,12 +78,68 @@ module.exports = function(app, passport) {
     app.get('/products/:id', isLoggedIn, async function(req, res){
         let etf = await Etf.findOne({'_id' : req.params.id}).exec();
         res.render('pages/etfdetail.ejs', {
-            etf : etf
+            etf : etf,
+            user : req.user
         });
 
     })
 
-    app.post('/products/upload',upload.single('sillybilly'), async function(req, res){
+    // =====================================
+    // ORDERS SECTION =====================
+    // =====================================
+    // we will want this protected so you have to be logged in to visit
+    // we will use route middleware to verify this (the isLoggedIn function)
+
+    app.get('/orders/:id', isLoggedIn, async function(req, res){
+        let etf = await Etf.findOne({'_id' : req.params.id}).exec();
+        res.render('pages/orders.ejs', {
+            etf : etf,
+            message: req.flash('createMessage'),
+            user : req.user
+        });
+
+    })
+
+    app.post('/orders/:id', async function(req, res){
+
+        let etf = await Etf.findOne({'_id' : req.params.id}).exec();
+
+
+        let user = req.user
+
+        console.log(req.body)
+        try{
+            await new Transaction({
+                user: user.local.email,
+                ticker: etf.ticker,
+                ric: etf.ric,
+                quantity: req.body.quantity,
+                status: 'Pending',
+                create_or_redeem: req.body.CreateRedeem,
+                order_date: new Date()
+
+                }).save();
+
+            req.flash('createMessage', 'Order Created!');
+
+            sendEmail('Order Submitted', 'philip.fortio@gmail.com', 'Someone has submitted an order for review!');
+
+            }
+        catch(e){
+            console.log(e);
+            req.flash('createMessage', 'Order Failed!');
+            }
+
+        res.render('pages/orders.ejs', {
+            etf : etf,
+            message : req.flash('createMessage'),
+            user : req.user
+
+        });
+
+    })
+
+    app.post('/products/upload', isLoggedIn, upload.single('sillybilly'), async function(req, res){
         
         const workSheetsFromBuffer = xlsx.parse(req.file.buffer);
         // Assumes first row is header
@@ -106,30 +166,33 @@ module.exports = function(app, passport) {
         //console.log(workSheetsFromBuffer);
         let etf_list = await Etf.find().exec();
         res.render('pages/products.ejs', {
-            etf_list : etf_list
+            etf_list : etf_list,
+            user : req.user
         });
 
     })
     // =====================================
-    // ORDERS SECTION =====================
+    // TRANSACTION QUERY SECTION =====================
     // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     // query historical orders placed by the user
     app.get('/orders', isLoggedIn, async function(req, res){
 
-        let etf_list = await Etf.find().exec();
-        res.render('pages/products.ejs', {
-            etf_list : etf_list
+        let trans_list = await Transaction.find().exec();
+        res.render('pages/listorders.ejs', {
+            trans_list : trans_list,
+            user : req.user
         });
 
     })
     // orders placed today
     app.get('/orderstoday', isLoggedIn, async function(req, res){
 
-        let etf_list = await Etf.find().exec();
-        res.render('pages/products.ejs', {
-            etf_list : etf_list
+        let trans_list = await Transaction.find().exec();
+        res.render('pages/listorders.ejs', {
+            trans_list : trans_list,
+            user : req.user
         });
 
     })

@@ -1,11 +1,16 @@
 <div class="container">
 
     <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/productlist" class="btn btn-default btn-sm">Product Page</a>
-        <a href="/profile" class="btn btn-default btn-sm">Profile</a>
-        <a href="/orderstoday" class="btn btn-default btn-sm">Todays Orders</a>
-        <a href="/orders" class="btn btn-default btn-sm">Historical Orders</a>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        <h1><img src="/barclays-eagle-logo.jpg" alt="logo" id="logo" /> Welcome to the Barclays Primary Market Portal</h1>
+        <div class="ribbontop col-sm-8"> 
+            <a href="/productlist" class="btn btn-default btn-sm">Product Page</a>
+            <a href="/profile" class="btn btn-default btn-sm">Profile</a>
+            <a href="/orderstoday" class="btn btn-default btn-sm">Todays Orders</a>
+            <a href="/orders" class="btn btn-default btn-sm">Historical Orders</a>
+            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        </div>
+        <div class="ribbontop col-sm-4"> 
+            Logged in as - <%= user.local.email %>
+        </div>
     </div>
 </div>

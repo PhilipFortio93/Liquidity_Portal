@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+
+<head>
+    <% include ../partials/head %>
+</head>
+<body>
+
+<header>
+    <% include ../partials/header %>
+</header>
+
+<div class="container">
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+    <h3><span class="fa fa-user"></span> Orders List </h3>
+
+        <table id="productlist">
+            <thead>
+                 <tr>
+                    <th>Order Date</th>
+                    <th>User</th>
+                    <th>ETF</th>
+                    <th>Create/Redeem</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                 </tr>
+             </thead>
+            <tbody>
+                <% trans_list.forEach(function(trans) { %>
+                <tr>
+                    <td><%= trans.order_date %></td>
+                    <td><%= trans.user %></td>
+                    <td><%= trans.ric %></td>
+                    <td><%= trans.create_or_redeem %></td>
+                    <td><%= trans.quantity %></td>
+                    <td><%= trans.status %></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+</div>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+<script>
+    $(document).ready(function() {
+    $   ('#productlist').DataTable();
+    });
+</script>
+</html>
