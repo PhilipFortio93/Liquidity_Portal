@@ -6,6 +6,13 @@ var User            = require('../app/models/user');
 
 let xlsx = require('node-xlsx')
 
+let isRole = function(role){
+    return function(req,res,next) {
+        if(req.user.role === role) return next()
+        return next(new Error(`You are not a ${role}`))
+    }
+}
+
 module.exports = function(app, passport, nodemailer) {
 
     let {sendEmail} = require('../config/mailer')(nodemailer)
@@ -56,7 +63,7 @@ module.exports = function(app, passport, nodemailer) {
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
         res.render('pages/profile.ejs', {
-            user : req.user // get the user out of session and pass to template
+            user : req.user // get the user out of session and pass to template,
         });
     });
 

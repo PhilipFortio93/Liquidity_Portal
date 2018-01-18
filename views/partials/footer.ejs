@@ -1,1 +1,16 @@
 <p class="text-center text-muted">© Copyright 2018 The Awesome People</p>
+<script>
+	$(document).ready(function() {
+
+	  $(".nav-side-menu").hide();
+
+	  $("#sidebar-button").click(function() {
+	    $(".nav-side-menu").show();
+	  });
+
+	  $(".nav-side-menu").click(function(){
+	    $(".nav-side-menu").hide();
+	  });
+	});
+
+</script>
