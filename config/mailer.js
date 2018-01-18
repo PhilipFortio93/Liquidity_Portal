@@ -37,10 +37,8 @@ module.exports = function(nodemailer) {
         }, function(error, response){
            if(error){
                console.log(error);
-               next(error)
            }else{
                console.log("Mail sent!");
-               next()
            }
         });
     }
