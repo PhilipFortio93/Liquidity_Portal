@@ -2,10 +2,17 @@
     <title>Node Authentication</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.3.3/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.3.3/js/tabulator.min.js"></script>
+
+        
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
-	</script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
     <style>
         body        { 
         	padding-top:20px; 
@@ -19,6 +26,59 @@
             background-color:white; 
             padding-bottom: 60px;
         }
+        .container  {
+            margin-left:2%;
+            margin-right:2%;
+            margin: 0 auto;
+            padding:0;
+        }
+        .row  {
+            justify-content: center;
+            margin:20px;
+        }
+        .editbutton {
+            border: none ;
+            width: 50px;
+            height: 20px;
+            padding: 0px;
+            margin: auto;
+            font-size: 100%;
+
+
+        }
+        tr td:first-child {
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-bottomleft: 5px;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-bottom-left-radius: 5px;
+
+        }
+        td {
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-bottomleft: 5px;  
+            -moz-border-radius-topright: 5px;
+            -moz-border-radius-bottomright: 5px;       
+        }
+        #productlist tr:nth-child(even) {
+            background-color: teal;
+
+        }
+
+        tr td:last-child {
+            -moz-border-radius-topright: 5px;
+            -moz-border-radius-bottomright: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -webkit-border-bottom-right-radius: 5px;
+        }
+
+        #productlist {
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+        }
+
+
 
         #logo {
             width:60px;
@@ -30,6 +90,7 @@
         }
 
         .nav-side-menu {
+          display: none;
           z-index: 1;
           overflow: auto;
           font-family: verdana;
@@ -59,7 +120,7 @@
           margin: 0px;
           line-height: 35px;
           cursor: pointer;
-          /*    
+             
             .collapsed{
                .arrow:before{
                          font-family: FontAwesome;
@@ -71,7 +132,7 @@
                          float:right;
                     }
              }
-        */
+        
         }
         .nav-side-menu ul :not(collapsed) .arrow:before,
         .nav-side-menu li :not(collapsed) .arrow:before {
@@ -140,6 +201,7 @@
           -ms-transition: all 1s ease;
           transition: all 1s ease;
         }
+
         @media (max-width: 767px) {
           .nav-side-menu {
             position: relative;

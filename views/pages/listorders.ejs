@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
-
+    <%if (user.role === "admin") { %>
+        <% include ../partials/sidebar %>
+    <% } %>
 <head>
     <% include ../partials/head %>
 </head>
@@ -26,6 +28,7 @@
                     <th>Create/Redeem</th>
                     <th>Quantity</th>
                     <th>Status</th>
+                    <th>Edit Order</th>
                  </tr>
              </thead>
             <tbody>
@@ -37,11 +40,12 @@
                     <td><%= trans.create_or_redeem %></td>
                     <td><%= trans.quantity %></td>
                     <td><%= trans.status %></td>
+                    <td><a href="/ordersdetail/<%=trans._id%>"><button type="submit" class="btn btn-warning btn-lg editbutton">Edit</button></a></td>
                 </tr>
                 <% }); %>
             </tbody>
         </table>
-
+    </div>
 </div>
 
 <footer>

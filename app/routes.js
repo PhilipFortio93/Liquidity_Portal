@@ -116,7 +116,7 @@ module.exports = function(app, passport, nodemailer) {
 
         console.log(req.body)
         try{
-            await new Transaction({
+            trans = await new Transaction({
                 user: user.local.email,
                 ticker: etf.ticker,
                 ric: etf.ric,
@@ -137,10 +137,11 @@ module.exports = function(app, passport, nodemailer) {
             req.flash('createMessage', 'Order Failed!');
             }
 
-        res.render('pages/orders.ejs', {
+        res.render('pages/ordersummary.ejs', {
             etf : etf,
             message : req.flash('createMessage'),
-            user : req.user
+            user : req.user,
+            trans : trans
 
         });
 
@@ -186,20 +187,109 @@ module.exports = function(app, passport, nodemailer) {
     // query historical orders placed by the user
     app.get('/orders', isLoggedIn, async function(req, res){
 
-        let trans_list = await Transaction.find().exec();
+        let trans_list = await Transaction.find({'user' : req.user.local.email}).sort({'order_date':-1}).exec();
         res.render('pages/listorders.ejs', {
             trans_list : trans_list,
             user : req.user
         });
 
     })
+
+    app.get('/ordersdetail/:id', isLoggedIn, async function(req, res){
+
+
+        let user = req.user;
+        let trans = await Transaction.findOne({'_id' : req.params.id}).exec();
+
+        let etf = await Etf.findOne({'ric' : trans.ric}).exec();
+
+        res.render('pages/ordersummary.ejs', {
+            etf : etf,
+            message: req.flash('createMessage'),
+            user : req.user,
+            trans : trans
+
+        });
+
+    })
+
+    app.post('/orders/delete/:id', isLoggedIn, async function(req, res){
+        
+        let trans = await Transaction.findOne({'_id' : req.params.id}).exec();
+        let etf = await Etf.findOne({'ric' : trans.ric}).exec();
+        console.log(etf);
+        await Transaction.remove({'_id' : req.params.id}).exec();
+
+        sendEmail('Order Deleted', 'philip.fortio@gmail.com', 'Someone has deleted an order!');
+        
+        req.flash('createMessage', 'Order Deleted!');
+        let user = req.user;
+        res.render('pages/ordersummary.ejs', {
+            etf : etf,
+            message: req.flash('createMessage'),
+            user : req.user,
+            trans : trans
+
+        });
+
+    })
+
+    app.post('/orders/approval/:id', isLoggedIn, async function(req, res){
+        
+        let trans = await Transaction.findOne({'_id' : req.params.id}).exec();
+        let etf = await Etf.findOne({'ric' : trans.ric}).exec();
+        console.log(etf);
+        await trans.update({'status' : 'Approved'}).exec();
+
+        sendEmail('Order Approved', 'philip.fortio@gmail.com', 'Your order has been approved!');
+        
+        req.flash('createMessage', 'Order Approved!');
+        let user = req.user;
+        res.render('pages/ordersummary.ejs', {
+            etf : etf,
+            message: req.flash('createMessage'),
+            user : req.user,
+            trans : trans
+
+        });
+
+    })
+
     // orders placed today
     app.get('/orderstoday', isLoggedIn, async function(req, res){
+        var today = new Date()
 
-        let trans_list = await Transaction.find().exec();
+        let trans_list = await Transaction.find({'user' : req.user.local.email, 'order_date' : today}).exec();
         res.render('pages/listorders.ejs', {
             trans_list : trans_list,
             user : req.user
+        });
+
+    })
+
+    app.get('/approvals', isLoggedIn, async function(req, res){
+
+        let trans_list = await Transaction.find({'status' : 'Pending'}).exec();
+        res.render('pages/approvals.ejs', {
+            trans_list : trans_list,
+            user : req.user
+        });
+
+    })
+
+    app.get('/approvals/:id', isLoggedIn, async function(req, res){
+
+        let user = req.user;
+        let trans = await Transaction.findOne({'_id' : req.params.id}).exec();
+
+        let etf = await Etf.findOne({'ric' : trans.ric}).exec();
+
+        res.render('pages/orderapproval.ejs', {
+            etf : etf,
+            message: req.flash('createMessage'),
+            user : req.user,
+            trans : trans
+
         });
 
     })

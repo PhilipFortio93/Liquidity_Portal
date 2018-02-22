@@ -27,7 +27,11 @@ var userSchema = mongoose.Schema({
         email        : String,
         name         : String
     },
-    role             : String
+    first_name       : String,
+    surname          : String,
+    role             : String,
+    accountapproved  : Boolean,
+    company          : String
 });
 
 // methods ======================

@@ -5,15 +5,16 @@ var mongoose = require('mongoose');
 var etfSchema = mongoose.Schema({
 
     name        : String,
+    issuer      : String,
     ticker      : String,
     ric         : String,
+    minsize     : Number,
     creation_cost   : Number,
     redemption_cost : Number,
     cut_off_time    : Date
 
 
 });
-
 // methods ======================
 
 
