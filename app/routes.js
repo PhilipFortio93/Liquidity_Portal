@@ -1,4 +1,5 @@
 var Etf            = require('../app/models/etf');
+var switch_etf          = require('../app/models/switch');
 var multer = require('multer');
 var upload = multer({ storage: multer.memoryStorage() });
 var Transaction = require('../app/models/transaction');
@@ -33,9 +34,14 @@ module.exports = function(app, passport, nodemailer) {
         res.render('pages/login.ejs', { message: req.flash('loginMessage') }); 
     });
 
+    app.get('/updateaxe', function(req, res) {
+        res.render('pages/profile.ejs', {
+            user : req.user // get the user out of session and pass to template,
+        });
+    });
     // process the login form
     app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/profile', // redirect to the secure profile section
+        successRedirect : '/productlist', // redirect to the secure profile section
         failureRedirect : '/login', // redirect back to the signup page if there is an error
         failureFlash : true // allow flash messages
     }));
@@ -75,6 +81,7 @@ module.exports = function(app, passport, nodemailer) {
     app.get('/productlist', isLoggedIn, async function(req, res){
 
         let etf_list = await Etf.find().exec();
+
         res.render('pages/products.ejs', {
             etf_list : etf_list,
             user : req.user
@@ -84,6 +91,7 @@ module.exports = function(app, passport, nodemailer) {
 
     app.get('/products/:id', isLoggedIn, async function(req, res){
         let etf = await Etf.findOne({'_id' : req.params.id}).exec();
+        console.log(typeof etf.minsize);
         res.render('pages/etfdetail.ejs', {
             etf : etf,
             user : req.user
@@ -147,27 +155,37 @@ module.exports = function(app, passport, nodemailer) {
 
     })
 
-    app.post('/products/upload', isLoggedIn, upload.single('sillybilly'), async function(req, res){
+    app.post('/products/upload', isLoggedIn, upload.single('axeupload'), async function(req, res){
         
         const workSheetsFromBuffer = xlsx.parse(req.file.buffer);
+        var today = new Date()
         // Assumes first row is header
         for (var i = 1; i < workSheetsFromBuffer[0].data.length ; i++) {
             datarow = workSheetsFromBuffer[0].data[i];
-                                
+            console.log(typeof datarow[6]);
             try{
-                await new Etf({
-                    name: datarow[0],
-                    ric: datarow[2],
-                    ticker: datarow[1],
-                    creation_cost: datarow[3],
-                    redemption_cost: datarow[4],
-                    cut_off_time: new Date()
-
-                    }).save();
+                await Etf.findOneAndUpdate(
+                    {'ric' : datarow[2]},
+                    { $set: {
+                            name: datarow[0],
+                            ric: datarow[2],
+                            ticker: datarow[1],
+                            minsize: datarow[3],
+                            creation_cost: datarow[4],
+                            redemption_cost: datarow[5],
+                            provider: datarow[8],
+                            currency: data[9],
+                            cut_off_time: new Date(today.getFullYear(),today.getMonth(), today.getDay(), datarow[6].toString(), datarow[7].toString())
+                        }
+                    },
+                    { upsert: true, new:true, setDefaultsOnInsert: true }
+                    );
                 }
             catch(e){
                 console.log(e);
                 }
+
+
 
         };
         
@@ -187,7 +205,7 @@ module.exports = function(app, passport, nodemailer) {
     // query historical orders placed by the user
     app.get('/orders', isLoggedIn, async function(req, res){
 
-        let trans_list = await Transaction.find({'user' : req.user.local.email}).sort({'order_date':-1}).exec();
+        let trans_list = await Transaction.find({'user' : req.user.local.email}).sort({'created_at':-1});
         res.render('pages/listorders.ejs', {
             trans_list : trans_list,
             user : req.user
@@ -202,12 +220,14 @@ module.exports = function(app, passport, nodemailer) {
         let trans = await Transaction.findOne({'_id' : req.params.id}).exec();
 
         let etf = await Etf.findOne({'ric' : trans.ric}).exec();
+        let switch_etf = await switch_etf.find({'ric' : trans.ric}).exec();
 
         res.render('pages/ordersummary.ejs', {
             etf : etf,
             message: req.flash('createMessage'),
             user : req.user,
-            trans : trans
+            trans : trans,
+            switch_etf : switch_etf
 
         });
 
@@ -257,9 +277,18 @@ module.exports = function(app, passport, nodemailer) {
 
     // orders placed today
     app.get('/orderstoday', isLoggedIn, async function(req, res){
-        var today = new Date()
+        var today = new Date();
+        todaystart = today.setHours(0,0,0,0);
+        todayend = today.setHours(23,59,59,999);
 
-        let trans_list = await Transaction.find({'user' : req.user.local.email, 'order_date' : today}).exec();
+        let trans_list = await Transaction.find({'user' : req.user.local.email, 'order_date' : { $gt: todaystart, $lt: todayend }}).exec();
+        
+
+        trans_list.forEach(function(doc, index) { 
+            console.log(index + " key: " + doc.order_date);
+            console.log(doc.order_date);
+        });
+
         res.render('pages/listorders.ejs', {
             trans_list : trans_list,
             user : req.user
@@ -313,4 +342,5 @@ function isLoggedIn(req, res, next) {
     // if they aren't redirect them to the home page
     res.redirect('/');
 }
+
 

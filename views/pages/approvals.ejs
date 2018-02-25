@@ -14,10 +14,18 @@
 
 <div class="container">
     <div class="row">
+        <div class="col-sm-3">
         <form enctype="multipart/form-data" action="/products/upload" method="post">
-            <input id="sillybilly" name="sillybilly" type="file" />
-            <button class='btn btn-success' type="submit">Upload</button>
+            <input id="axeupload" name="axeupload" type="file" />
+            <button class='btn btn-success' type="submit">Upload Axes</button>
         </form>
+        </div>
+        <div class="col-sm-3">
+        <form enctype="multipart/form-data" action="/products/uploadswitch" method="post">
+            <input id="axeupload" name="axeupload" type="file" />
+            <button class='btn btn-success' type="submit">Upload Switches</button>
+        </form>
+        </div>
     </div>
     <div class="row">
 
@@ -39,14 +47,14 @@
             <tbody>
                 <% trans_list.forEach(function(trans) { %>
                 <tr>
-                    <td><%= trans.order_date %></td>
+                    <td><%= trans.orderdate %></td>
                     <td><%= trans.user %></td>
                     <td><%= trans.ric %></td>
                     <td><%= trans.create_or_redeem %></td>
                     <td><%= trans.quantity %></td>
                     <td><%= trans.status %></td>
                     <td><a href="/approvals/<%=trans._id%>"> 
-                        <button type="submit" class="btn btn-warning btn-lg">Check Order Detail</button>
+                        <button type="submit" class="btn btn-warning btn-lg checkbutton">Check Order Detail</button>
                     </a></td>
                 </tr>
                 <% }); %>
@@ -62,7 +70,13 @@
 </body>
 <script>
     $(document).ready(function() {
-    $   ('#productlist').DataTable();
+    $   ('#productlist').DataTable({
+            "pageLength": 50,
+            "columnDefs": [ {
+                "targets": 4,
+                "render": $.fn.dataTable.render.number(',', '.', 0, '')
+                }]
+        });
     });
 </script>
 </html>

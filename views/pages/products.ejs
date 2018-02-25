@@ -19,14 +19,13 @@
 
         <!-- LOCAL INFORMATION -->
     <h3><span class="fa fa-user"></span> Product Catalogue</h3>
-        <div id="example-table"></div>
+
         <table id="productlist">
             <thead>
                  <tr>
                     <th>Ric</th>
                     <th>Issuer</th>
                     <th>Name</th>
-                    <th>Ticker</th>
                     <th>Min Creation Size</th>
                     <th>Creation Cost</th>
                     <th>Redemption Cost</th>
@@ -36,19 +35,20 @@
             <tbody>
                 <% etf_list.forEach(function(etf) { %>
                 <tr id="row-style">
-                    <td><a href="/products/<%=etf._id%>"><%= etf.ric %></a></td>
-                    <td><%= etf.issuer %></td>
+                    <td><a href="/products/<%=etf._id%>"><%= etf.ticker %></a></td>
+                    <td><%= etf.provider %></td>
                     <td><%= etf.name %></td>
-                    <td> <%= etf.ticker %></td>
                     <td><%= etf.minsize %></td>
                     <td><%= etf.creation_cost %></td>
                     <td><%= etf.redemption_cost %></td>
-                    <td><%= etf.cut_off_time %></td>
+                    <td><%= etf.cutoff %></td>
 
                 </tr>
                 <% }); %>
             </tbody>
         </table>
+
+    </div>
 
 </div>
 
@@ -63,22 +63,21 @@
     
     $(document).ready(function() {
 
-    $ ('#productlist').DataTable();
-    //$('#example-table').tabulator();
-    /*
-    $("#productlist").tabulator({
-        columns:[
-            {title:"Issuer", field:"Issuer", visible:false, sorter:"string", width:200, editor:true},
-            {title:"Name", field:"Name", sorter:"string", align:"right", formatter:"progress"},
-            {title:"Ric", field:"Ric", sorter:"string"},
-            {title:"Ticker", field:"Ticker", formatter:"string", align:"center", width:100},
-            {title:"Min Size", field:"col", sorter:"number"},
-            {title:"Creation Cost", field:"dob", sorter:"number", align:"center"},
-            {title:"Redemption Cost", field:"cheese", sorter:"number", align:"center", formatter:"tickCross"},
-            {title:"Cut Off Time", field:"dob", sorter:"date", align:"center"},
-            ],
+        $ ('#productlist').DataTable({
+            "pageLength": 50,
+            "columnDefs": [ {
+                "targets": 3,
+                "render": $.fn.dataTable.render.number(',', '.', 0, '')
+                },{
+                 "targets": 4,
+                "render": $.fn.dataTable.render.number(',', '.', 1, '')                   
+                },{
+                 "targets": 5,
+                "render": $.fn.dataTable.render.number(',', '.', 1, '')                   
+                }  ]
         });
-    */
+
+
     });
 </script>
 </html>

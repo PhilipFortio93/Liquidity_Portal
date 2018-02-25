@@ -34,7 +34,7 @@
             <tbody>
                 <% trans_list.forEach(function(trans) { %>
                 <tr>
-                    <td><%= trans.order_date %></td>
+                    <td><%= trans.orderdate %></td>
                     <td><%= trans.user %></td>
                     <td><%= trans.ric %></td>
                     <td><%= trans.create_or_redeem %></td>
@@ -55,7 +55,13 @@
 </body>
 <script>
     $(document).ready(function() {
-    $   ('#productlist').DataTable();
+    $   ('#productlist').DataTable({
+            "pageLength": 50,
+            "columnDefs": [ {
+                "targets": 4,
+                "render": $.fn.dataTable.render.number(',', '.', 0, '')
+                }]
+        });
     });
 </script>
 </html>

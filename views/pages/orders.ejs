@@ -13,25 +13,30 @@
 </header>
 
 <div class="container">
+    <h3>Place an order on <%= etf.name %></h3>
     <div class="row">
-
-        <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-
-                    <!-- show message when creating transaction -->
                 <% if (message.length > 0) { %>
                     <div class="alert alert-danger"><%= message %></div>
                 <% } %>
+        <!-- LOCAL INFORMATION -->
+        
+        <form action="/orders/<%=etf._id%>" method="post">
+        <div class="col-sm-6">
+            <h3>ETF Detail</h3>
+            <div class="well">
 
-                <h3><span class="fa fa-user"></span> Place an order on <%= etf.name %></h3>
+                    <!-- show message when creating transaction -->
+
+
+                
 
                     <p>
-                        <strong>id</strong>: <%= etf._id %><br>
-                        <strong>email</strong>: <%= etf.name %><br>
-                        <strong>password</strong>: <%= etf.ric %>
+                        <strong>RIC</strong>: <%= etf.ric %><br>
+                        <strong>Name</strong>: <%= etf.name %><br>
+                        <strong>Provider</strong>: <%= etf.provider %><br>
+                        <strong>Transaction Currency</strong>: <%= etf.currency %><br>
                     </p>
-                    <form action="/orders/<%=etf._id%>" method="post">
+                    
                         <div class="form-group">
                             <label>Creation or Redemption?</label>
                               <select name="CreateRedeem">
@@ -40,19 +45,55 @@
                               </select>
                         </div>
                         <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" class="form-control" name="quantity">
+                            <label>Order Type?</label>
+                              <select name="OrderType">
+                                <option value="Cash">Cash</option>
+                                <option value="Switch">Switch</option>
+                                <option value="Specie">In Specie</option>
+                                <option value="Bespoke">Bespoke</option>
+                              </select>
                         </div>
-                        <div>
-                            <label>Settlement Date </label>
-                            <input type="date" name="bday">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" lang="en-150" class="form-control" name="quantity">
                         </div>
 
+
                     <button type="submit" class="btn btn-warning btn-lg">Submit Order</button>
-                    </form>
+                    
 
             </div>
         </div>
+
+        <div class="col-sm-6">
+            <h3>ETF Switch</h3>
+            <div class="well">
+                <div class="form-group">
+                    <label>Switch ETF</label>
+                      <select name="Switch">
+                        <option value="Cash">Cash</option>
+                        <option value="Switch">Switch</option>
+                        <option value="Specie">In Specie</option>
+                        <option value="Bespoke">Bespoke</option>
+                      </select>
+                </div>
+            </div>
+            <h3>Settlement Options</h3>
+            <div class="well">
+                <div>
+                    <label>Settlement Date </label>
+                    <input type="date" name="bday">
+                </div>
+                <div class="form-group">
+                    <label>Settlement Location</label>
+                      <select name="SetLocation">
+                        <option value="Euroclear">Euroclear</option>
+                        <option value="Clearstream">Clearstream</option>
+                      </select>
+                </div>
+            </div>
+        </div>
+        </form>
 
     </div>
 
@@ -62,6 +103,11 @@
 <footer>
     <% include ../partials/footer %>
 </footer>
+
+<script type="text/javascript">
+    
+
+</script>
 
 </body>
 </html>

@@ -13,8 +13,7 @@ module.exports = function(nodemailer) {
        secure: true,
        auth: {
            //type: "OAuth2",
-           user: "philip.fortio@gmail.com",
-           pass: "RtcDr,hiym!"
+
        }
     }); 
 
