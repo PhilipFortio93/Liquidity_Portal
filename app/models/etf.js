@@ -4,10 +4,11 @@ var mongoose = require('mongoose');
 // define the schema for our user model
 var etfSchema = mongoose.Schema({
 
-    name        : {type: String, unique:true},
+    ric         : {type: String, unique:true},
+    name        : String,
+    isin        : String,
     issuer      : String,
     ticker      : String,
-    ric         : String,
     currency    : String,
     minsize     : Number,
     provider    : String,
@@ -15,6 +16,8 @@ var etfSchema = mongoose.Schema({
     creation_axe    : Number,
     redemption_cost : Number,
     redemption_axe  : Number,
+    borrowfee: Number,
+    borrowsize: Number,
     cut_off_time    : Date
 
 
@@ -38,6 +41,22 @@ etfSchema.virtual('cutoff').get(function(){
     minutes = minutes < 10 ? '0' + minutes : minutes;
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
+});
+
+etfSchema.virtual('axedcreator').get(function(){
+    var axed = this.creation_cost.toFixed(1) > this.creation_axe.toFixed(1) ? true : false;
+    if (axed == true){
+        createstring = this.creation_axe.toFixed(1).toString() + " (" + this.creation_cost.toFixed(1).toString() + ")";
+    }
+    else{
+        createstring = this.creation_cost.toFixed(1).toString();
+    }
+    return createstring;
+});
+
+etfSchema.virtual('axedcheck').get(function(){
+    var axed = this.creation_cost.toFixed(1) > this.creation_axe.toFixed(1) ? true : false;
+    return axed;
 });
 // create the model for etfs and expose it to our app
 module.exports = mongoose.model('Etf', etfSchema);

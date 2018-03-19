@@ -14,23 +14,59 @@
 
 <div class="container">
     <div class="row">
-
+        <h3 id="orderheader"><span class="fa fa-shopping-cart"></span> <%= etf.name %></h3>
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-6">
+            <h3>Primary Market Detail</h3>
             <div class="well">
-                <h3><span class="fa fa-user"></span> ETF - <%= etf.name %></h3>
 
                     <p>
-                        <strong>id</strong>: <%= etf._id %><br>
-                        <strong>email</strong>: <%= etf.name %><br>
-                        <strong>password</strong>: <%= etf.ric %>
+                        <strong>RIC</strong>: <%= etf.ric %><br>
+                        <strong>Name</strong>: <%= etf.name %><br>
+                        <strong>Provider</strong>: <%= etf.provider %><br>
+                        <strong>Minimum Size (EUR)</strong>: <span id="largenumbertwo"><%= etf.minsize %></span><br>
+                        <strong>Axe</strong>: <%= etf.axedcheck %><br>
+                        <strong>Transaction Currency</strong>: <%= etf.currency %><br>
                     </p>
 
-                    <a href="/orders/<%=etf._id%>"> <button type="submit" class="btn btn-warning btn-lg">Place an Order</button></a>
+                    <a href="/orders/<%=etf._id%>"> <button type="submit" class="btn btn-warning btn-lg">Place a Primary Market Order</button></a>
 
             </div>
         </div>
+        <div class="col-sm-6">
+            <h3>Request Funding/ Borrow</h3>
+            <div class="well">
 
+                    <p>
+                        <strong>RIC</strong>: <%= etf.ric %><br>
+                        <strong>Name</strong>: <%= etf.name %><br>
+                        <strong>Indicative Fee</strong>: <%= etf.borrowfee %><br>
+                        <strong >Indicative Size</strong>: <span id="largenumber"><%= etf.borrowsize %></span><br>
+                        <strong>Indicative Term</strong>: 
+                              <select name="OrderType" class="OrderType">
+                                <option value="1W">1 Week</option>
+                                <option value="2W">2 Weeks</option>
+                                <option value="1M">1 Month</option>
+                                <option value="3M">3 Months</option>
+                                <option value="6M">6 Months</option>
+                                <option value="12M">12 Months</option>
+                              </select><br>
+                        <strong>Indicative Collateral</strong>: 
+                              <select name="OrderType" class="OrderType">
+                                <option value="1W">EUR Cash</option>
+                                <option value="1M">USD Cash</option>
+                                <option value="1M">EUR Govvies</option>
+                                <option value="6M">US Treasuries</option>
+                                <option value="2W">Equities</option>
+                                <option value="3M">ETFs</option>
+
+                              </select>
+                    </p>
+
+                    <a href="/orders/<%=etf._id%>"> <button type="submit" class="btn btn-warning btn-lg">Request Funding/ Cover</button></a>
+
+            </div>
+        </div>
     </div>
 
 </div>
@@ -41,4 +77,23 @@
 </footer>
 
 </body>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        function addCommas(nStr){
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)){
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
+
+    $("#largenumber").html(addCommas($("#largenumber").text()));
+    $("#largenumbertwo").html(addCommas($("#largenumbertwo").text()));
+    });
+</script>
 </html>

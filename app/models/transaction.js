@@ -7,8 +7,10 @@ var transactionSchema = mongoose.Schema({
     ticker      : String,
     ric         : String,
     quantity   : Number,
+    currency	: String,
     create_or_redeem : String,
     status: String,
+    trade_date : Date,
     settlement_date: Date,
     order_date    : Date
 

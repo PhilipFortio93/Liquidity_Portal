@@ -13,10 +13,11 @@
 </header>
 
 <div class="container">
-    <h3>Place an order on <%= etf.name %></h3>
+    
     <div class="row">
+        <h3 id="orderheader">Place an order on <%= etf.name %></h3>
                 <% if (message.length > 0) { %>
-                    <div class="alert alert-danger"><%= message %></div>
+                    <div class="alert alert-success"><%= message %></div>
                 <% } %>
         <!-- LOCAL INFORMATION -->
         
@@ -26,9 +27,6 @@
             <div class="well">
 
                     <!-- show message when creating transaction -->
-
-
-                
 
                     <p>
                         <strong>RIC</strong>: <%= etf.ric %><br>
@@ -46,11 +44,13 @@
                         </div>
                         <div class="form-group">
                             <label>Order Type?</label>
-                              <select name="OrderType">
+                              <select name="OrderType" class="OrderType">
+                                <option value="Cash">Select</option>
                                 <option value="Cash">Cash</option>
                                 <option value="Switch">Switch</option>
                                 <option value="Specie">In Specie</option>
                                 <option value="Bespoke">Bespoke</option>
+                                <option value="Directed">Directed Cash</option>
                               </select>
                         </div>
                         <div class="form-group">
@@ -66,29 +66,28 @@
         </div>
 
         <div class="col-sm-6">
-            <h3>ETF Switch</h3>
-            <div class="well">
+            <h3>Follow Up Options</h3>
+            <div class="well FollowUpOptions">
                 <div class="form-group">
-                    <label>Switch ETF</label>
-                      <select name="Switch">
-                        <option value="Cash">Cash</option>
-                        <option value="Switch">Switch</option>
-                        <option value="Specie">In Specie</option>
-                        <option value="Bespoke">Bespoke</option>
-                      </select>
+
                 </div>
             </div>
             <h3>Settlement Options</h3>
             <div class="well">
                 <div>
+                    <label>Trade Date </label>
+                    <input type="date" name="tdate" id="tradedate">
+                </div>
+                <div>
                     <label>Settlement Date </label>
-                    <input type="date" name="bday">
+                    <input type="date" name="sdate" id="setdate">
                 </div>
                 <div class="form-group">
                     <label>Settlement Location</label>
                       <select name="SetLocation">
                         <option value="Euroclear">Euroclear</option>
                         <option value="Clearstream">Clearstream</option>
+                        <option value="FrenchDom">French Domestic</option>
                       </select>
                 </div>
             </div>
@@ -105,7 +104,97 @@
 </footer>
 
 <script type="text/javascript">
-    
+        $(document).ready(function() {
+
+            Date.prototype.toDateInputValue = (function(){
+                var local = new Date(this);
+                local.setMinutes(this.getMinutes()-this.getTimezoneOffset());
+                return local.toJSON().slice(0,10);
+            });
+
+            Date.prototype.addtwodays = (function(){
+                var local = new Date(this);
+                local.setDate(this.getDate()+2);
+                return local.toJSON().slice(0,10);
+            });
+            $('#tradedate').val(new Date().toDateInputValue());
+            $('#setdate').val(new Date().addtwodays());
+
+
+            $ ('.OrderType').change(function(){
+                $(".OrderType option:selected").each(function(){
+                    if($(this).text()=="Switch"){
+                        
+                        var replacestr =    `<div class="well FollowUpOptions">
+                                                <h4>ETF Switch Options</h4>
+                                                <div class="form-group">
+                                                <label>Switch ETF</label>
+                                                  <select name="Switch">`
+
+
+                        replacestr = replacestr + `</select>
+                                                </div>
+                                            </div>` ;
+
+                        $("div.well.FollowUpOptions").replaceWith(replacestr);
+                    }
+                    else if($(this).text()=="Cash"){
+
+                        var replacestr =    `<div class="well FollowUpOptions">
+                                                <h4>Cash Options</h4>
+                                                <div class="form-group">
+                                                <label>Select Currency</label>
+                                                  <select name="Switch">
+                                                    <option value="EUR">EUR</option>
+                                                    <option value="USD">USD</option>
+                                                    <option value="GBP">GBP</option>
+                                                    <option value="CHF">CHF</option>
+                                                  </select>
+                                                </div>
+                                            </div>` ;
+
+                        $("div.well.FollowUpOptions").replaceWith(replacestr);
+
+                    }
+                    else if($(this).text()=="Directed Cash"){
+
+                       var replacestr =    `<div class="well FollowUpOptions">
+                                                <h4>Directed Cash Options</h4>
+                                                <div class="form-group">
+                                                <label>Broker</label>
+                                                  <select name="Switch">
+                                                    <option value="Barc">Barclays</option>
+                                                    <option value="Jpm">JP Morgan</option>
+                                                    <option value="GS">Goldman Sachs</option>
+                                                    <option value="MS">Morgan Stanley</option>
+                                                  </select>
+                                                </div>
+                                            </div>` ;
+
+                        $("div.well.FollowUpOptions").replaceWith(replacestr);
+                    }
+                    else if($(this).text()=="Bespoke"){
+
+                       var replacestr =    `<div class="well FollowUpOptions">
+                                                <h4>Bespoke Options</h4>
+                                                <div class="form-group">
+                                                <label>Bespoke Order Request</label>
+                                                <textarea name="Address" rows=3 cols=30></textarea>
+                                                </div>
+                                            </div>` ;
+
+                        $("div.well.FollowUpOptions").replaceWith(replacestr);
+                    }
+                    else{
+                       var replacestr =    `<div class="well FollowUpOptions">
+                                            </div>` ;
+
+                        $("div.well.FollowUpOptions").replaceWith(replacestr);
+                    }
+                })
+                    
+            })
+        });
 
 </script>
 

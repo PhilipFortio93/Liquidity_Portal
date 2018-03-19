@@ -18,29 +18,33 @@
     <div class="row">
 
         <!-- LOCAL INFORMATION -->
-    <h3><span class="fa fa-user"></span> Product Catalogue</h3>
+    <h3><span class="fa fa-book"></span> Product Catalogue</h3>
 
         <table id="productlist">
             <thead>
                  <tr>
-                    <th>Ric</th>
+                    <th>Ticker</th>
                     <th>Issuer</th>
                     <th>Name</th>
-                    <th>Min Creation Size</th>
-                    <th>Creation Cost</th>
-                    <th>Redemption Cost</th>
-                    <th>Cut Off Time</th>
+                    <th>Min Size (EUR)</th>
+                    <th>Base CCY</th>
+                    <th>Create</th>
+                    <th>Redeem</th>
+                    <th>Axe</th>
+                    <th>Cut Off</th>
                  </tr>
              </thead>
             <tbody>
                 <% etf_list.forEach(function(etf) { %>
-                <tr id="row-style">
+                <tr id="row-style" >
                     <td><a href="/products/<%=etf._id%>"><%= etf.ticker %></a></td>
                     <td><%= etf.provider %></td>
                     <td><%= etf.name %></td>
                     <td><%= etf.minsize %></td>
-                    <td><%= etf.creation_cost %></td>
+                    <td><%= etf.currency %></td>
+                    <td><%= etf.axedcreator %></td>
                     <td><%= etf.redemption_cost %></td>
+                    <td><%= etf.axedcheck %></td>
                     <td><%= etf.cutoff %></td>
 
                 </tr>
@@ -65,14 +69,17 @@
 
         $ ('#productlist').DataTable({
             "pageLength": 50,
+            "createdRow": function(row, data, index){
+                
+                if(data[7]=="true"){
+                    $('td', row).eq(5).addClass('highlight');
+                }
+            },
             "columnDefs": [ {
                 "targets": 3,
-                "render": $.fn.dataTable.render.number(',', '.', 0, '')
+                "render": $.fn.dataTable.render.number(',', '.', 0, '')               
                 },{
-                 "targets": 4,
-                "render": $.fn.dataTable.render.number(',', '.', 1, '')                   
-                },{
-                 "targets": 5,
+                 "targets": 6,
                 "render": $.fn.dataTable.render.number(',', '.', 1, '')                   
                 }  ]
         });

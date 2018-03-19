@@ -21,32 +21,23 @@
 
                     <!-- show message when creating transaction -->
                 <% if (message.length > 0) { %>
-                    <div class="alert alert-danger"><%= message %></div>
+                    <div class="alert alert-success"><%= message %></div>
                 <% } %>
 
-                <h3><span class="fa fa-user"></span> Place an order on <%= etf.name %></h3>
+                <h3><span class="fa fa-shopping-cart"></span> Order Summary for <%= etf.name %></h3>
 
                     <p>
-                        <strong>id</strong>: <%= etf._id %><br>
-                        <strong>email</strong>: <%= etf.name %><br>
-                        <strong>password</strong>: <%= etf.ric %>
-                    </p>
-                    <form action="/orders/delete/<%=trans._id%>" method="post">
-                        <div class="form-group">
-                            <label>Creation or Redemption?</label>
-                              <select name="CreateRedeem">
-                                <option value="Create">Creation</option>
-                                <option value="Redeem">Redemption</option>
-                              </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Quantity</label>: <%= trans.quantity %>
-                        </div>
-                        <div>
-                            <label>Settlement Date </label>
-                            <input type="date" name="bday">
-                        </div>
+                        <strong>RIC</strong>: <%= etf.ric %><br>
+                        <strong>Name</strong>: <%= etf.name %><br>
+                        <strong>Provider</strong>: <%= etf.provider %><br>
+                        <strong>Transaction Currency</strong>: <%= etf.currency %><br>
+                        <strong>Creation or Redemption</strong>: <%= trans.create_or_redeem %><br>
+                        <strong>Quantity</strong>: <%= trans.quantity %><br>
+                        <strong>Transaction ID</strong>: <%= trans._id %><br>
 
+                    </p>
+
+                    <form action="/orders/delete/<%=trans._id%>" method="post">
                     <button type="submit" class="btn btn-warning btn-lg">Delete Order</button>
                     </form>
 

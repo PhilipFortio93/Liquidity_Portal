@@ -6,16 +6,10 @@ var switchSchema = mongoose.Schema({
 
     ric        : {type: String, unique:false},
     switch_ric      : String,
-    ticker      : String,
-    switch_ticker       : String,
+    name      : String,
     currency    : String,
     switch_currency    : String,
-    minsize     : Number,
-    provider    : String,
-    creation_cost   : Number,
-    creation_axe    : Number,
-    redemption_cost : Number,
-    redemption_axe  : Number,
+    cost     : Number,
     cut_off_time    : Date
 
 },{

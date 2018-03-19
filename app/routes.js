@@ -107,10 +107,12 @@ module.exports = function(app, passport, nodemailer) {
 
     app.get('/orders/:id', isLoggedIn, async function(req, res){
         let etf = await Etf.findOne({'_id' : req.params.id}).exec();
+        let switchetf = await switch_etf.findOne({'ric' : etf.ric}).exec();
         res.render('pages/orders.ejs', {
             etf : etf,
             message: req.flash('createMessage'),
-            user : req.user
+            user : req.user,
+            switchetf : switchetf
         });
 
     })
@@ -130,14 +132,21 @@ module.exports = function(app, passport, nodemailer) {
                 ric: etf.ric,
                 quantity: req.body.quantity,
                 status: 'Pending',
+                currency: etf.currency,
                 create_or_redeem: req.body.CreateRedeem,
+                trade_date: new Date(),
                 order_date: new Date()
 
                 }).save();
 
             req.flash('createMessage', 'Order Created!');
 
-            sendEmail('Order Submitted', 'philip.fortio@gmail.com', 'Someone has submitted an order for review!');
+            var emailcontent = 'Someone has submitted an order for review! \n'
+            emailcontent = emailcontent + "RIC: " + etf.ric + "\n"
+            emailcontent = emailcontent + "Quantity: " + req.body.quantity + "\n"
+            emailcontent = emailcontent + "Please login to approve the order"
+
+            sendEmail('Order Submitted', 'philip.fortio@gmail.com', emailcontent);
 
             }
         catch(e){
@@ -155,7 +164,7 @@ module.exports = function(app, passport, nodemailer) {
 
     })
 
-    app.post('/products/upload', isLoggedIn, upload.single('axeupload'), async function(req, res){
+    app.post('/products/uploadswitch', isLoggedIn, upload.single('switchupload'), async function(req, res){
         
         const workSheetsFromBuffer = xlsx.parse(req.file.buffer);
         var today = new Date()
@@ -163,6 +172,47 @@ module.exports = function(app, passport, nodemailer) {
         for (var i = 1; i < workSheetsFromBuffer[0].data.length ; i++) {
             datarow = workSheetsFromBuffer[0].data[i];
             console.log(typeof datarow[6]);
+            try{
+                await switch_etf.findOneAndUpdate(
+                    {'ric' : datarow[2]},
+                    { $set: {
+                            name: datarow[0],
+                            ric: datarow[2],
+                            switch_ric: datarow[4],
+                            currency: datarow[3],
+                            switch_currency: datarow[5],
+                            cost: datarow[6],
+                            cut_off_time: new Date()
+                        }
+                    },
+                    { upsert: true, new:true, setDefaultsOnInsert: true }
+                    );
+                }
+            catch(e){
+                console.log(e);
+                }
+
+
+
+        };
+        
+        //console.log(workSheetsFromBuffer);
+        let etf_list = await Etf.find().exec();
+        res.render('pages/products.ejs', {
+            etf_list : etf_list,
+            user : req.user
+        });
+
+    })
+
+    app.post('/products/upload', isLoggedIn, upload.single('axeupload'), async function(req, res){
+        
+        const workSheetsFromBuffer = xlsx.parse(req.file.buffer);
+        var today = new Date()
+        // Assumes first row is header
+        for (var i = 1; i < workSheetsFromBuffer[0].data.length ; i++) {
+            datarow = workSheetsFromBuffer[0].data[i];
+            console.log(datarow[2]);
             try{
                 await Etf.findOneAndUpdate(
                     {'ric' : datarow[2]},
@@ -174,7 +224,11 @@ module.exports = function(app, passport, nodemailer) {
                             creation_cost: datarow[4],
                             redemption_cost: datarow[5],
                             provider: datarow[8],
-                            currency: data[9],
+                            currency: datarow[9],
+                            creation_axe: datarow[10],
+                            redemption_axe: datarow[11],
+                            borrowfee: datarow[12],
+                            borrowsize: datarow[13],
                             cut_off_time: new Date(today.getFullYear(),today.getMonth(), today.getDay(), datarow[6].toString(), datarow[7].toString())
                         }
                     },
@@ -220,14 +274,14 @@ module.exports = function(app, passport, nodemailer) {
         let trans = await Transaction.findOne({'_id' : req.params.id}).exec();
 
         let etf = await Etf.findOne({'ric' : trans.ric}).exec();
-        let switch_etf = await switch_etf.find({'ric' : trans.ric}).exec();
+        let switchetf = await switch_etf.find({'ric' : trans.ric}).exec();
 
         res.render('pages/ordersummary.ejs', {
             etf : etf,
             message: req.flash('createMessage'),
             user : req.user,
             trans : trans,
-            switch_etf : switch_etf
+            switchetf : switchetf
 
         });
 
