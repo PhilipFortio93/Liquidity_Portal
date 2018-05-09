@@ -12,9 +12,8 @@ module.exports = function(nodemailer) {
        port: 465,
        secure: true,
        auth: {
-           //type: "OAuth2",
-           user: "philip.fortio@gmail.com",
-           pass: "RtcDr,hiym!"
+           //user: ,
+           //pass: 
        }
     }); 
 
