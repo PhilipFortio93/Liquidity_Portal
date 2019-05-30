@@ -75,6 +75,8 @@ function ColumnCompiler_MSSQL() {
 
   longtext: 'nvarchar(max)',
 
+  // TODO: mssql supports check constraints as of SQL Server 2008
+  // so make enu here more like postgres
   enu: 'nvarchar(100)',
 
   uuid: 'uniqueidentifier',

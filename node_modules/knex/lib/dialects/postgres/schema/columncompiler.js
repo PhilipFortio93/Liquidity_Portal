@@ -54,6 +54,11 @@ function ColumnCompiler_PG() {
 
 
   double: 'double precision',
+  decimal: function decimal(precision, scale) {
+    if (precision === null) return 'decimal';
+    return 'decimal(' + this._num(precision, 8) + ', ' + this._num(scale, 2) + ')';
+  },
+
   floating: 'real',
   increments: 'serial primary key',
   json: function json(jsonb) {

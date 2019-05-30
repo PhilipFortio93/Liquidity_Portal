@@ -57,8 +57,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var debugBindings = (0, _debug2.default)('knex:bindings');
 
 var fakeClient = {
-  formatter: function formatter() {
-    return new _formatter2.default(fakeClient);
+  formatter: function formatter(builder) {
+    return new _formatter2.default(fakeClient, builder);
   }
 };
 
@@ -116,7 +116,7 @@ function Raw() {
   // Returns the raw sql for the query.
   toSQL: function toSQL(method, tz) {
     var obj = void 0;
-    var formatter = this.client.formatter();
+    var formatter = this.client.formatter(this);
 
     if (Array.isArray(this.bindings)) {
       obj = replaceRawArrBindings(this, formatter);
@@ -189,7 +189,6 @@ function replaceRawArrBindings(raw, formatter) {
 
 function replaceKeyBindings(raw, formatter) {
   var values = raw.bindings;
-
   var sql = raw.sql;
 
 
@@ -229,6 +228,7 @@ function replaceKeyBindings(raw, formatter) {
 // Allow the `Raw` object to be utilized with full access to the relevant
 // promise API.
 require('./interface')(Raw);
+helpers.addQueryContext(Raw);
 
 exports.default = Raw;
 module.exports = exports['default'];

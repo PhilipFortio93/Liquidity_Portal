@@ -2,6 +2,10 @@
 
 exports.__esModule = true;
 
+var _identity2 = require('lodash/identity');
+
+var _identity3 = _interopRequireDefault(_identity2);
+
 var _assign2 = require('lodash/assign');
 
 var _assign3 = _interopRequireDefault(_assign2);
@@ -47,9 +51,15 @@ function QueryCompiler_MySQL(client, builder) {
   // Compiles a `columnInfo` query.
   columnInfo: function columnInfo() {
     var column = this.single.columnInfo;
+
+    // The user may have specified a custom wrapIdentifier function in the config. We
+    // need to run the identifiers through that function, but not format them as
+    // identifiers otherwise.
+    var table = this.client.customWrapIdentifier(this.single.table, _identity3.default);
+
     return {
       sql: 'select * from information_schema.columns where table_name = ? and table_schema = ?',
-      bindings: [this.single.table, this.client.database()],
+      bindings: [table, this.client.database()],
       output: function output(resp) {
         var out = resp.reduce(function (columns, val) {
           columns[val.COLUMN_NAME] = {

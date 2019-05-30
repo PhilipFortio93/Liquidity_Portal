@@ -11,11 +11,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 //var tabulator = require('jquery.tabulator');
+require('dotenv').config();
 
 var configDB = require('./config/database.js');
 
+console.log("connecting to: ",configDB.url)
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(configDB.url,{ useMongoClient: true }); // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration
 require('./config/mailer')(nodemailer); // pass passport for configuration

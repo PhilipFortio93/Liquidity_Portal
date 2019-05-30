@@ -2,6 +2,10 @@
 
 exports.__esModule = true;
 
+var _isUndefined2 = require('lodash/isUndefined');
+
+var _isUndefined3 = _interopRequireDefault(_isUndefined2);
+
 var _assign2 = require('lodash/assign');
 
 var _assign3 = _interopRequireDefault(_assign2);
@@ -17,7 +21,7 @@ function SchemaCompiler(client, builder) {
   this.builder = builder;
   this.client = client;
   this.schema = builder._schema;
-  this.formatter = client.formatter();
+  this.formatter = client.formatter(builder);
   this.sequence = [];
 }
 
@@ -57,6 +61,12 @@ function SchemaCompiler(client, builder) {
 function buildTable(type) {
   return function (tableName, fn) {
     var builder = this.client.tableBuilder(type, tableName, fn);
+
+    // pass queryContext down to tableBuilder but do not overwrite it if already set
+    var queryContext = this.builder.queryContext();
+    if (!(0, _isUndefined3.default)(queryContext) && (0, _isUndefined3.default)(builder.queryContext())) {
+      builder.queryContext(queryContext);
+    }
 
     builder.setSchema(this.schema);
     var sql = builder.toSQL();

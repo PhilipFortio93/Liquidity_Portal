@@ -24,7 +24,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ColumnCompiler_MySQL() {
   _columncompiler2.default.apply(this, arguments);
-  this.modifiers = ['unsigned', 'nullable', 'defaultTo', 'comment', 'first', 'after', 'collate'];
+  this.modifiers = ['unsigned', 'nullable', 'defaultTo', 'comment', 'collate', 'first', 'after'];
 }
 // MySQL Column Compiler
 // -------

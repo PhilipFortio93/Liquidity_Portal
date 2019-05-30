@@ -16,6 +16,8 @@ var _extend3 = _interopRequireDefault(_extend2);
 
 exports.default = ColumnBuilder;
 
+var _helpers = require('../helpers');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // The chainable interface off the original "column" method.
@@ -54,6 +56,8 @@ var aliasMethod = {
     return this;
   };
 });
+
+(0, _helpers.addQueryContext)(ColumnBuilder);
 
 ColumnBuilder.prototype.notNull = ColumnBuilder.prototype.notNullable = function notNullable() {
   return this.nullable(false);

@@ -6,6 +6,10 @@ var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
+var _isUndefined2 = require('lodash/isUndefined');
+
+var _isUndefined3 = _interopRequireDefault(_isUndefined2);
+
 var _isArray3 = require('lodash/isArray');
 
 var _isArray4 = _interopRequireDefault(_isArray3);
@@ -54,12 +58,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // -------
 function TableCompiler(client, tableBuilder) {
   this.client = client;
+  this.tableBuilder = tableBuilder;
   this.method = tableBuilder._method;
   this.schemaNameRaw = tableBuilder._schemaName;
   this.tableNameRaw = tableBuilder._tableName;
   this.single = tableBuilder._single;
   this.grouped = (0, _groupBy3.default)(tableBuilder._statements, 'grouping');
-  this.formatter = client.formatter();
+  this.formatter = client.formatter(tableBuilder);
   this.sequence = [];
   this._formatting = client.config && client.config.formatting;
 }
@@ -208,9 +213,15 @@ TableCompiler.prototype.getColumns = function (method) {
   var columns = this.grouped.columns || [];
   method = method || 'add';
 
+  var queryContext = this.tableBuilder.queryContext();
+
   return columns.filter(function (column) {
     return column.builder._method === method;
   }).map(function (column) {
+    // pass queryContext down to columnBuilder but do not overwrite it if already set
+    if (!(0, _isUndefined3.default)(queryContext) && (0, _isUndefined3.default)(column.builder.queryContext())) {
+      column.builder.queryContext(queryContext);
+    }
     return _this.client.columnCompiler(_this, column.builder);
   });
 };

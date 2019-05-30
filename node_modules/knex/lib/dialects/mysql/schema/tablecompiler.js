@@ -134,7 +134,7 @@ function TableCompiler_MySQL() {
     });
   },
   getFKRefs: function getFKRefs(runner) {
-    var formatter = this.client.formatter();
+    var formatter = this.client.formatter(this.tableBuilder);
     var sql = 'SELECT KCU.CONSTRAINT_NAME, KCU.TABLE_NAME, KCU.COLUMN_NAME, ' + '       KCU.REFERENCED_TABLE_NAME, KCU.REFERENCED_COLUMN_NAME, ' + '       RC.UPDATE_RULE, RC.DELETE_RULE ' + 'FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KCU ' + 'JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS AS RC ' + '       USING(CONSTRAINT_NAME)' + 'WHERE KCU.REFERENCED_TABLE_NAME = ' + formatter.parameter(this.tableNameRaw) + ' ' + '  AND KCU.CONSTRAINT_SCHEMA = ' + formatter.parameter(this.client.database()) + ' ' + '  AND RC.CONSTRAINT_SCHEMA = ' + formatter.parameter(this.client.database());
 
     return runner.query({
@@ -143,7 +143,7 @@ function TableCompiler_MySQL() {
     });
   },
   dropFKRefs: function dropFKRefs(runner, refs) {
-    var formatter = this.client.formatter();
+    var formatter = this.client.formatter(this.tableBuilder);
 
     return _bluebird2.default.all(refs.map(function (ref) {
       var constraintName = formatter.wrap(ref.CONSTRAINT_NAME);
@@ -154,7 +154,7 @@ function TableCompiler_MySQL() {
     }));
   },
   createFKRefs: function createFKRefs(runner, refs) {
-    var formatter = this.client.formatter();
+    var formatter = this.client.formatter(this.tableBuilder);
 
     return _bluebird2.default.all(refs.map(function (ref) {
       var tableName = formatter.wrap(ref.TABLE_NAME);

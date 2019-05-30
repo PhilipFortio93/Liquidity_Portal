@@ -22,7 +22,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /*eslint max-len: 0, no-var:0 */
 
-var charsRegex = exports.charsRegex = /[\0\b\t\n\r\x1a\"\'\\]/g; // eslint-disable-line no-control-regex
+var charsRegex = exports.charsRegex = /[\0\b\t\n\r\x1a"'\\]/g; // eslint-disable-line no-control-regex
 var charsMap = exports.charsMap = {
   '\0': '\\0',
   '\b': '\\b',
@@ -178,7 +178,7 @@ function convertTimezone(tz) {
   if (tz === 'Z') {
     return 0;
   }
-  var m = tz.match(/([\+\-\s])(\d\d):?(\d\d)?/);
+  var m = tz.match(/([+\-\s])(\d\d):?(\d\d)?/);
   if (m) {
     return (m[1] == '-' ? -1 : 1) * (parseInt(m[2], 10) + (m[3] ? parseInt(m[3], 10) : 0) / 60) * 60;
   }

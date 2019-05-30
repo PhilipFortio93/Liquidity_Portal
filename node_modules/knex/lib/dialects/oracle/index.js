@@ -96,7 +96,7 @@ function Client_Oracle(config) {
     return new (Function.prototype.bind.apply(_transaction2.default, [null].concat([this], Array.prototype.slice.call(arguments))))();
   },
   formatter: function formatter() {
-    return new _formatter2.default(this);
+    return new (Function.prototype.bind.apply(_formatter2.default, [null].concat([this], Array.prototype.slice.call(arguments))))();
   },
   queryCompiler: function queryCompiler() {
     return new (Function.prototype.bind.apply(_compiler2.default, [null].concat([this], Array.prototype.slice.call(arguments))))();

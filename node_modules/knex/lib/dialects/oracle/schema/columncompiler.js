@@ -68,6 +68,10 @@ function ColumnCompiler_Oracle() {
     // if (!precision) return 'number'; // TODO: Check If default is ok
     return 'number(' + this._num(precision, 8) + ', ' + this._num(scale, 2) + ')';
   },
+  decimal: function decimal(precision, scale) {
+    if (precision === null) return 'decimal';
+    return 'decimal(' + this._num(precision, 8) + ', ' + this._num(scale, 2) + ')';
+  },
   integer: function integer(length) {
     return length ? 'number(' + this._num(length, 11) + ')' : 'integer';
   },

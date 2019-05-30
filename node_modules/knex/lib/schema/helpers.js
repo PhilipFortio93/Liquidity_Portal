@@ -13,6 +13,18 @@ var _isString3 = _interopRequireDefault(_isString2);
 exports.pushQuery = pushQuery;
 exports.pushAdditional = pushAdditional;
 
+var _columncompiler = require('./columncompiler');
+
+var _columncompiler2 = _interopRequireDefault(_columncompiler);
+
+var _tablecompiler = require('./tablecompiler');
+
+var _tablecompiler2 = _interopRequireDefault(_tablecompiler);
+
+var _compiler = require('./compiler');
+
+var _compiler2 = _interopRequireDefault(_compiler);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Push a new query onto the compiled "sequence" stack,
@@ -26,7 +38,17 @@ function pushQuery(query) {
     query.bindings = this.formatter.bindings;
   }
   this.sequence.push(query);
-  this.formatter = this.client.formatter();
+
+  var builder = void 0;
+  if (this instanceof _columncompiler2.default) {
+    builder = this.columnBuilder;
+  } else if (this instanceof _tablecompiler2.default) {
+    builder = this.tableBuilder;
+  } else if (this instanceof _compiler2.default) {
+    builder = this.builder;
+  }
+
+  this.formatter = this.client.formatter(builder);
 }
 
 // Used in cases where we need to push some additional column specific statements.
